@@ -1,0 +1,54 @@
+version: '3'
+services:
+  aaa-site:
+    build: aaa-site
+    container_name: aaa-site
+    restart: always
+    ports:
+      - "80"
+    networks:
+      - docker-network
+    environment:
+      VIRTUAL_HOST: aaa.test
+      VIRTUAL_PORT: 80
+      VIRTUAL_PROTO: http
+  bbb-site:
+    build: bbb-site
+    container_name: bbb-site
+    restart: always
+    ports:
+      - "80"
+    networks:
+      - docker-network
+    environment:
+      VIRTUAL_HOST: bbb.test
+      VIRTUAL_PORT: 80
+      VIRTUAL_PROTO: http
+  ccc-site:
+    build: ccc-site
+    container_name: ccc-site
+    restart: always
+    ports:
+      - "8080"
+    networks:
+      - docker-network
+    environment:
+      VIRTUAL_HOST: ccc.test,www.ccc.test
+      VIRTUAL_PORT: 8080
+      VIRTUAL_PROTO: http
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: always
+    privileged: true
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    labels:
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true"
+    networks:
+      - docker-network
+networks:
+  docker-network:
+    external: true
