@@ -1,5 +1,16 @@
 # CMDの挙動
 
+CMD の主な目的は、コンテナ実行時のデフォルト（初期設定）を指定することである。  
+
+`docker run <image-name> xxx`の`xxx`以降の引数は、CMDを上書きする。
+
+- exec形式  
+  `CMD ["exe", "$P1"]`  
+  この書式は、環境変数`$P1`は変数展開されないことに注意。
+- shell形式  
+  `CMD exe $P1`  
+  この書式は、環境変数`$P1`は変数展開される。
+
 ## ビルド
 
 ```console
@@ -44,3 +55,7 @@ root         7  0.0  0.0   5856  2968 pts/0    R+   23:06   0:00 ps aux
 ```console
 $ docker image rm cmd
 ```
+
+## 参考
+
+- [CMD](https://docs.docker.jp/engine/reference/builder.html#cmd)

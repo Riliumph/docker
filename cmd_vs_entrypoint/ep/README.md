@@ -5,7 +5,7 @@ ENTRYPOINTは、コンテナを**実行ファイル**として処理するよう
 `docker run <image-name> xxx`の`xxx`以降の引数は、ENTRYPOINTの全要素の後に追加される。  
 DockerfileのENTRYPOINTを上書きする場合には`docker run --entrypoint`を使う。
 
-## build
+## ビルド
 
 ```console
 $ docker build ./ --tag ep
