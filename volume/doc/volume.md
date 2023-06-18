@@ -32,6 +32,8 @@ $ docker container run --name test -it --rm --mount type=bind,src=$HOME,dst=/usr
 具体的には、`httpd`や`postgres`などの設定ファイルがそれにあたる。  
 ホストのgitで管理したいがために、ホストにファイルとして保存されてほしいし、ホストで編集した内容がコンテナに同時に反映されてほしい。
 
+特にビルドサーバー（環境）として使う場合によく使われる。
+
 ---
 
 ## Volume Mount

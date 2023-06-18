@@ -1,21 +1,47 @@
 # https://docs.docker.com/compose/compose-file/
 version: '3.8'
 services:
-  sample-container:
-    container_name: sample
+  volume-service:
+    container_name: v-root-c
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./dockerfiles
+      dockerfile: volume.Dockerfile
     stdin_open: true # -i
     tty: true # -t
     volumes:
       # https://docs.docker.com/compose/compose-file/#volumes
       - type: volume
-        source: storage
-        target: /mnt/share
+        source: ex-storage
+        target: /mnt/volume
+  bind-root-service:
+    container_name: b-root-c
+    build:
+      context: ./dockerfiles
+      dockerfile: bind_root.Dockerfile
+    stdin_open: true # -i
+    tty: true # -t
+    volumes:
+      - type: bind
+        source: ./
+        target: /mnt/bind
+  bind-user-service:
+    container_name: b-user-c
+    build:
+      context: ./dockerfiles
+      dockerfile: bind_user.Dockerfile
+      args:
+        - UID=${UID}
+        - GID=${GID}
+        - USERNAME=${USERNAME}
+    stdin_open: true # -i
+    tty: true # -t
+    volumes:
+      - type: bind
+        source: ./
+        target: /mnt/bind
 
 volumes:
   # https://docs.docker.com/compose/compose-file/#volumes-top-level-element
-  storage:
+  ex-storage:
     name: ex-storage
     external: false # docker-compose管理外で作成されたならtrueを指定する
