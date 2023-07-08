@@ -1,0 +1,66 @@
+# https://docs.docker.com/compose/compose-file/
+version: '3.8'
+services:
+# NW1 -------------------------
+  client_in_nw1:
+    container_name: client_in_nw1
+    build:
+      context: ./dockerfiles
+      dockerfile: client.Dockerfile
+    hostname: client
+    networks:
+      - seg3nw
+    stdin_open: true # -i
+    tty: true # -t
+  server_in_nw1:
+    container_name: server_in_nw1
+    build:
+      context: ./dockerfiles
+      dockerfile: server.Dockerfile
+    hostname: server
+    networks:
+      - seg3nw
+    stdin_open: true # -i
+    tty: true # -t
+# NW2 -------------------------
+  client_in_nw2:
+    container_name: client_in_nw2
+    build:
+      context: ./dockerfiles
+      dockerfile: client.Dockerfile
+    hostname: client
+    networks:
+      - seg4nw1
+      - seg4nw2
+    stdin_open: true # -i
+    tty: true # -t
+  server_in_nw2:
+    container_name: server_in_nw2
+    build:
+      context: ./dockerfiles
+      dockerfile: server.Dockerfile
+    hostname: server
+    networks:
+      - seg4nw2
+    stdin_open: true # -i
+    tty: true # -t
+
+networks:
+  seg3nw:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.0.0/16
+  seg4nw1:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.20.10.0/24
+  seg4nw2:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.20.20.0/24
