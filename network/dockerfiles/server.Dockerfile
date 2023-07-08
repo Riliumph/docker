@@ -11,6 +11,8 @@ RUN apt-get update &&\
     rm -rf /var/lib/apt/lists/*
 
 RUN echo "PS1='\u@\h(\$(hostname -i)):\w \\$ '" >> ~/.bashrc
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN useradd -m docker && \
     gpasswd -a docker sudo && \
     echo "docker:docker" | \
