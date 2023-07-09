@@ -1,7 +1,7 @@
 # https://docs.docker.com/compose/compose-file/
 version: '3.8'
 services:
-# NW1 -------------------------
+  # NW1 -------------------------
   client_in_nw1:
     container_name: client_in_nw1
     build:
@@ -22,7 +22,7 @@ services:
       - seg3nw
     stdin_open: true # -i
     tty: true # -t
-# NW2 -------------------------
+  # NW2 -------------------------
   client_in_nw2:
     container_name: client_in_nw2
     build:

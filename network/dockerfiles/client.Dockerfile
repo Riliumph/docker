@@ -3,6 +3,7 @@ FROM ubuntu:22.04
 RUN apt-get update &&\
     apt-get install --no-install-recommends -y \
     curl \
+    dnsutils \
     iproute2 \
     iputils-ping \
     telnet \
