@@ -1,0 +1,33 @@
+version: '3.1'
+
+services:
+  db:
+    build:
+      context: ./dockerfiles
+      dockerfile: db.dockerfile
+    restart: always
+    hostname: db_server
+    networks:
+      - db_nw
+    volumes:
+      - type: volume
+        source: db-storage
+        target: /var/lib/postgresql/data
+    ports:
+      - target: 5432
+        published: 5432
+    stdin_open: false
+    tty: false
+
+volumes:
+  db-storage:
+    name: db-storage
+    external: false
+
+networks:
+  db_nw:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.10.0/24
