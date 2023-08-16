@@ -1,0 +1,17 @@
+# トランザクション分離レべルの設定における注意点
+
+トランザクション分離レベルをR`READ UNCOMMITTED`に変更する。
+
+PostgreSQLではトランザクション開始後にのみ設定できる。  
+トランザクション開始前だと、以下の警告が出て設定されていないことがわかる。
+
+```console
+tran_test=# SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+WARNING:  SET TRANSACTION can only be used in transaction blocks
+SET
+tran_test=#  SHOW TRANSACTION ISOLATION LEVEL;
+transaction_isolation
+-----------------------
+ read committed
+(1 row)
+```
