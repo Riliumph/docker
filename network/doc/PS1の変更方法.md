@@ -28,7 +28,7 @@ $ ip -4 route show default | awk '{print \$3}'
 
 dockerfile内で以下のような記述をするとうまく動かない
 
-```dockefile
+```dockerfile
 FROM ubuntu
 
 RUN apt-get update && apt-get install -y iproute2

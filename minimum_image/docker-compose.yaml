@@ -1,11 +1,12 @@
 # https://docs.docker.com/compose/compose-file/
-version: '3.8'
+version: "3.8"
 services:
   alpine:
     container_name: alpine
     build:
       context: .
       dockerfile: alpine.Dockerfile
+    hostname: alpine
     stdin_open: true # -i
     tty: true # -t
   busybox:
@@ -13,6 +14,7 @@ services:
     build:
       context: .
       dockerfile: busybox.Dockerfile
+    hostname: busybox
     stdin_open: true # -i
     tty: true # -t
   debian-slim:
@@ -20,6 +22,7 @@ services:
     build:
       context: .
       dockerfile: debian-slim.Dockerfile
+    hostname: debian-slim
     stdin_open: true # -i
     tty: true # -t
   distroless:
@@ -27,5 +30,6 @@ services:
     build:
       context: .
       dockerfile: distroless.Dockerfile
+    hostname: distroless
     stdin_open: true # -i
     tty: true # -t

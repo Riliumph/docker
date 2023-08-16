@@ -1,3 +1,5 @@
 FROM debian:stable-slim
 
-ENTRYPOINT ["/bin/sh"]
+RUN echo "PS1='\u@\h(\$(hostname -i)):\w \\$ '" >> ~/.bashrc
+
+ENTRYPOINT ["/bin/bash"]

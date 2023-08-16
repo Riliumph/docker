@@ -1,11 +1,12 @@
 # https://docs.docker.com/compose/compose-file/
-version: '3.8'
+version: "3.8"
 services:
   volume-service:
     container_name: v-root-c
     build:
       context: ./dockerfiles
       dockerfile: volume.Dockerfile
+    hostname: volume_container
     stdin_open: true # -i
     tty: true # -t
     volumes:
@@ -18,6 +19,7 @@ services:
     build:
       context: ./dockerfiles
       dockerfile: bind_root.Dockerfile
+    hostname: bind_container
     stdin_open: true # -i
     tty: true # -t
     volumes:
@@ -33,6 +35,7 @@ services:
         - UID=${UID}
         - GID=${GID}
         - USERNAME=${USERNAME}
+    hostname: bind_container
     stdin_open: true # -i
     tty: true # -t
     volumes:
