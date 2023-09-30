@@ -28,3 +28,9 @@
 $ docker compose exec -it db /bin/bash
 root@db_server(10.10.10.2):/ #
 ```
+
+## DBへの接続
+
+```console
+$ docker compose exec -it db psql -U postgres -d postgres
+```
