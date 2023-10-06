@@ -2,32 +2,8 @@
 
 ## SQL
 
-```sql
-select
-    d.data_id,
-    case
-        when d.operator = '=' then d.left_operand = d.right_operand
-        when d.operator = '<>' then d.left_operand <> d.right_operand
-        when d.operator = '<' then d.left_operand < d.right_operand
-        when d.operator = '<=' then d.left_operand <= d.right_operand
-        when d.operator = '>' then d.left_operand > d.right_operand
-        when d.operator = '>=' then d.left_operand >= d.right_operand
-        else false
-    end
-from
-    simple_data as d
-```
-
 ```console
-flexible_calc=# select
-    d.data_id,
-    case
-        when d.operator = '=' then d.left_operand = d.right_operand
-        else false
-    end
-from
-    simple_data as d
-;
+flexible_calc=# （省略）
  data_id | case 
 ---------+------
        1 | t
@@ -48,7 +24,7 @@ printf "%s\n" "hoge" | eval "${tool}"
 任意のコードを実行できるとは、まさにSQLインジェクション以上に簡単にDBをハックできるということだ。
 
 すでに、存在しているクエリに情報を渡すということは可能である。  
-しかし、そのクレイはやはりSQLを呼び出すプログラミング言語側に実装される必要がある。
+しかし、そのクエリはSQLを呼び出すプログラミング言語側に実装される必要がある。
 
 こんな感じ。
 
@@ -91,5 +67,3 @@ select
 from
     simple_data as d
 ```
-
-`=`という文字列をけん

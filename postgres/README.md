@@ -34,3 +34,9 @@ root@db_server(10.10.10.2):/ #
 ```console
 $ docker compose exec -it db psql -U postgres -d postgres
 ```
+
+### スキーマの確認
+
+```console
+postgres=# \dn
+```

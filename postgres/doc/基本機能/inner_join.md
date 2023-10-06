@@ -7,11 +7,21 @@
 シンプルに`data-variant`を表現する。
 
 ```sql
-select * from data as d inner join variant as v on d.variant_id = v.variant_id;
+SELECT
+    *
+FROM
+    DATA AS d
+    INNER JOIN variant AS v ON d.variant_id = v.variant_id;
 ```
 
 ## where句を使う
 
 ```sql
-select * from data as d, variant as v where d.variant_id = v.variant_id;
+SELECT
+    *
+FROM
+    DATA AS d,
+    variant AS v
+WHERE
+    d.variant_id = v.variant_id;
 ```
