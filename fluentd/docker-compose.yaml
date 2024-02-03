@@ -1,0 +1,139 @@
+version: '3'
+services:
+    # bastion:
+    #   image: debian:stable-slim
+    #   hostname: bastion
+    #   stdin_open: true
+    #   tty: true
+    #   volumes:
+    #     - type: volume
+    #       source: log_storage
+    #       target: /volumes
+
+    reverse_proxy:
+      image: traefik:latest
+      command: --api.insecure=true --providers.docker
+      hostname: traefik
+      ports:
+        - target: 80
+          published: 80
+        # WEB UI
+        - target: 8080
+          published: 8080
+      volumes:
+        - type: bind # docker providerを使う場合必須
+          source: /var/run/docker.sock
+          target: /var/run/docker.sock
+        - type: bind
+          source: traefik/traefik.yaml
+          target: /etc/traefik/traefik.yml
+
+    service_a:
+      image: nginx:latest
+      hostname: service-a
+      volumes:
+        - type: bind
+          source: nginx/service-a.html
+          target: /usr/share/nginx/html/service-a.html
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.service-a.rule=PathPrefix(`/service-a`)"
+        - "traefik.http.routers.service-a.entrypoints=web"
+      depends_on:
+        - logger
+      logging:
+        driver: "fluentd"
+        options:
+          # localhostはservice_aのことではなく、host OSのこと
+          fluentd-address: localhost:24224
+          tag: service.a.access
+          # workaround: 起動時に接続失敗してコンテナが立ち上がらない問題を回避
+          fluentd-async-connect: "true"
+
+    service_b:
+      image: nginx:latest
+      hostname: service-b
+      volumes:
+        - type: bind
+          source: nginx/service-b.html
+          target: /usr/share/nginx/html/service-b.html
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.service-b.rule=PathPrefix(`/service-b`)"
+        - "traefik.http.routers.service-b.entrypoints=web"
+      depends_on:
+        - logger
+      logging:
+        driver: "fluentd"
+        options:
+          fluentd-address: localhost:24224
+          tag: service.b.access
+          fluentd-async-connect: "true"
+
+    logger:
+      build: ./fluentd
+      hostname: fluentd
+      restart: always
+      stdin_open: true
+      tty: true
+      ports:
+        - target: 24224
+          published: 24224
+        - target: 24220
+          published: 24220
+        - target: 24224
+          published: 24224
+          protocol: udp
+      volumes:
+        - type: bind
+          source: fluentd
+          target: /fluentd/etc
+          read_only: true
+        - type: volume
+          source: log_storage
+          target: /fluentd/log
+
+    log_analyzer:
+      build: elasticsearch/
+      hostname: elasticsearch
+      restart: always
+      environment:
+        - discovery.type=single-node
+        - cluster.name=es-cluster
+        - node.name=elasticsearch
+        - bootstrap.memory_lock=true
+        - xpack.security.enabled=false
+        - TZ=Asia/Tokyo
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      volumes:
+        - type: volume
+          source: analysis_storage
+          target: /usr/share/elasticsearch/data
+      ports:
+        - target: 9200
+          published: 9200
+
+    visualizer:
+      build: kibana/
+      hostname: kibana
+      ports:
+        - target: 5601
+          published: 5601
+      environment:
+        - ELASTICSEARCH_HOSTS=http://elasticsearch:9200 # log_analyzer service's hostname
+        - TZ=Asia/Tokyo
+        - I18N_LOCALE=ja-JP
+      depends_on:
+        - log_analyzer
+      restart: always
+
+volumes:
+  log_storage:
+    name: log_storage
+    external: false
+  analysis_storage:
+    name: analysis_storage
+    external: false

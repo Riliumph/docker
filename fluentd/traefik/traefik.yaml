@@ -1,0 +1,18 @@
+providers:
+  docker:
+    # labelレスのコンテナを無視する
+    exposedByDefault: false
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  streaming:
+    address: ":1704/udp"
+api:
+  dashboard: true
+  insecure: true # dev環境用設定
+
+log:
+  level: DEBUG
