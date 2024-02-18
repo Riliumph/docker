@@ -50,6 +50,8 @@ $ curl http://localhost/service-a.html
 
 このログが`fluentd`によって成形されて、`logger`サービスに以下のログが表示される。
 
+### loggerサービス
+
 > 時刻が一致していることが分かる。また、json部分をフォーマットした。
 
 ```json
@@ -64,6 +66,8 @@ $ curl http://localhost/service-a.html
 
 `logger`サービスの`fluentd`が、`log_analyzer`サービスの`elasticsearch`へ転送する。  
 ただし、`elasticsearch`のログは自身に関するログのみ取り扱うため、ログファイルで見ることはできない。  
+
+### log-analyzerサービス
 
 この`elasticsearch`がため込んだログを`visualizer`サービスの`kibana`が取得してブラウザに表示してくれる。
 
