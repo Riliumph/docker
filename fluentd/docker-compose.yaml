@@ -1,18 +1,7 @@
 version: '3'
 services:
-    # bastion:
-    #   image: debian:stable-slim
-    #   hostname: bastion
-    #   stdin_open: true
-    #   tty: true
-    #   volumes:
-    #     - type: volume
-    #       source: log_storage
-    #       target: /volumes
-
     reverse_proxy:
       image: traefik:latest
-      command: --api.insecure=true --providers.docker
       hostname: traefik
       ports:
         - target: 80
@@ -29,7 +18,7 @@ services:
           target: /etc/traefik/traefik.yml
 
     service_a:
-      image: nginx:latest
+      build: ./nginx
       hostname: service-a
       volumes:
         - type: bind
@@ -51,7 +40,7 @@ services:
           fluentd-async-connect: "true"
 
     service_b:
-      image: nginx:latest
+      build: ./nginx
       hostname: service-b
       volumes:
         - type: bind
@@ -72,10 +61,8 @@ services:
 
     logger:
       build: ./fluentd
-      hostname: fluentd
+      hostname: logger
       restart: always
-      stdin_open: true
-      tty: true
       ports:
         - target: 24224
           published: 24224
@@ -120,10 +107,12 @@ services:
       build: kibana/
       hostname: kibana
       ports:
+        # WEB UI
         - target: 5601
           published: 5601
       environment:
-        - ELASTICSEARCH_HOSTS=http://elasticsearch:9200 # log_analyzer service's hostname
+        # log_analyzer service's hostname
+        - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
         - TZ=Asia/Tokyo
         - I18N_LOCALE=ja-JP
       depends_on:
