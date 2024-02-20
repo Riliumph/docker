@@ -16,6 +16,8 @@ services:
         - type: bind
           source: traefik/traefik.yaml
           target: /etc/traefik/traefik.yml
+      networks:
+        efk_stack_network:
 
     service_a:
       build: ./nginx
@@ -34,10 +36,12 @@ services:
         driver: "fluentd"
         options:
           # localhostはservice_aのことではなく、host OSのこと
-          fluentd-address: localhost:24224
+          fluentd-address: 10.10.10.10:24224
           tag: service.a.access
           # workaround: 起動時に接続失敗してコンテナが立ち上がらない問題を回避
           fluentd-async-connect: "true"
+      networks:
+        efk_stack_network:
 
     service_b:
       build: ./nginx
@@ -55,22 +59,24 @@ services:
       logging:
         driver: "fluentd"
         options:
-          fluentd-address: localhost:24224
+          fluentd-address: 10.10.10.10:24224
           tag: service.b.access
           fluentd-async-connect: "true"
+      networks:
+        efk_stack_network:
 
     logger:
       build: ./fluentd
       hostname: logger
       restart: always
-      ports:
-        - target: 24224
-          published: 24224
-        - target: 24220
-          published: 24220
-        - target: 24224
-          published: 24224
-          protocol: udp
+      # ports:
+      #   - target: 24224
+      #     published: 24224
+      #   - target: 24220
+      #     published: 24220
+      #   - target: 24224
+      #     published: 24224
+      #     protocol: udp
       volumes:
         - type: bind
           source: fluentd
@@ -79,6 +85,9 @@ services:
         - type: volume
           source: log_storage
           target: /fluentd/log
+      networks:
+        efk_stack_network:
+          ipv4_address: 10.10.10.10
 
     log_analyzer:
       build: elasticsearch/
@@ -102,6 +111,8 @@ services:
       ports:
         - target: 9200
           published: 9200
+      networks:
+        efk_stack_network:
 
     visualizer:
       build: kibana/
@@ -118,6 +129,8 @@ services:
       depends_on:
         - log_analyzer
       restart: always
+      networks:
+        efk_stack_network:
 
 volumes:
   log_storage:
@@ -126,3 +139,10 @@ volumes:
   analysis_storage:
     name: analysis_storage
     external: false
+
+networks:
+  efk_stack_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.10.0/24
