@@ -40,6 +40,7 @@ $ docker compose up -d
 
 ```console
 $ curl http://localhost/service-a.html
+$ curl http://localhost/service-b.html
 ```
 
 `service-a`サービスに以下のログが表示される。
