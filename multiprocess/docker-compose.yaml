@@ -1,0 +1,15 @@
+version: "3"
+services:
+  multiserver:
+    build:
+      context: ./
+      dockerfile: dockerfile
+    stdin_open: true
+    tty: true
+    hostname: multiserver
+    ports:
+      - target: 80
+        published: 80
+      - target: 22
+        published: 22
+
