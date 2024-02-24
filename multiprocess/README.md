@@ -65,4 +65,6 @@ stdout_logfile_maxbytes=0
 
 ## 参考
 
+- [Supervisor Configuration File](http://supervisord.org/configuration.html)
 - [Docker視点で見るSupervisorの使い方](https://qiita.com/taka4sato/items/1f59371ead748d88635a)
+- [Docker and the PID 1 zombie reaping problem](https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/)
