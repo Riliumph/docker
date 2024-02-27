@@ -22,6 +22,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq\
     # xubuntu-desktop
     # xfce4 xfce4-goodies\
     lxde\
+    # retry
+    supervisor\
     && apt-get clean\
     && rm -rf /var/lib/apt/lists/*
 
@@ -32,5 +34,16 @@ COPY ./.vnc/ .vnc/
 ENV VNC_PW vncserver
 RUN echo -e "${VNC_PW}\n${VNC_PW}\n" | vncpasswd -f > ~/.vnc/passwd
 
+# Supervisor
+RUN groupadd supervisor
+COPY ./supervisor/vncserver.conf /etc/supervisor/conf.d/vncserver.conf
+RUN mkdir -p /var/run/supervisor\
+    && chown -R :supervisor /var/run/supervisor\
+    && chmod -R g+wr /var/run/supervisor\
+    && chown -R :supervisor /etc/supervisor\
+    && chmod -R g+wr /etc/supervisor\
+    && chown -R :supervisor /var/log/supervisor\
+    && chmod -R g+wr /var/log/supervisor
+
 COPY ./start.sh start.sh
-ENTRYPOINT [ "./start.sh" ]
+ENTRYPOINT [ "/usr/bin/supervisord" ]
