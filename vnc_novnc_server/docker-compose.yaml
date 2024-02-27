@@ -1,0 +1,43 @@
+version: '3'
+services:
+  vncserver:
+    build:
+      context: ./vncserver
+      dockerfile: dockerfile
+    # GUI用に共有メモリ拡張
+    shm_size: 256m
+    stdin_open: true
+    tty: true
+    init: true
+    # NW
+    hostname: vnc-server
+    networks:
+      - vnc_nw
+
+  websockify:
+    build:
+      context: ./websockify
+      dockerfile: dockerfile
+    depends_on:
+      - vncserver
+    stdin_open: true
+    tty: true
+    # NW
+    hostname: novnc-server
+    networks:
+      - vnc_nw
+    ports:
+      # noVNC port
+      - target: 6080
+        published: 6080
+    # FS
+    environment:
+      - VNC_SERVER_HOST=vnc-server
+
+networks:
+  vnc_nw:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.0.0/16

@@ -1,0 +1,36 @@
+FROM debian:bookworm-slim
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq\
+    && apt-get install --no-install-recommends -y -qq\
+    # utility系のインストール
+    sudo\
+    peco\
+    silversearcher-ag\
+    vim\
+    lsof \
+    curl wget dnsutils iproute2 iputils-ping traceroute\
+    # Windows System系
+    dbus-x11 x11-utils x11-xserver-utils x11-apps\
+    # VNC系
+    xterm\
+    tigervnc-standalone-server tigervnc-common tigervnc-xorg-extension tigervnc-viewer tigervnc-tools\
+    # tightvncserver\
+    xfonts-base\
+    # Desktop Environment
+    # ubuntu-gnome-desktop
+    # xubuntu-desktop
+    # xfce4 xfce4-goodies\
+    lxde\
+    && apt-get clean\
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root
+COPY ./.vnc/ .vnc/
+
+# VNC
+ENV VNC_PW vncserver
+RUN echo -e "${VNC_PW}\n${VNC_PW}\n" | vncpasswd -f > ~/.vnc/passwd
+
+COPY ./start.sh start.sh
+ENTRYPOINT [ "./start.sh" ]
