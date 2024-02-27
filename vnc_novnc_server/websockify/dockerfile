@@ -1,0 +1,19 @@
+FROM debian:bookworm-slim
+
+ENV DEBIAN_FRONTEND noninteractive
+# VNC系
+RUN apt-get update -qq &&\
+    apt-get install --no-install-recommends -y -qq\
+    procps\
+    peco\
+    silversearcher-ag\
+    vim\
+    lsof \
+    curl wget dnsutils iproute2 iputils-ping traceroute\
+    novnc\
+    websockify\
+    && apt-get clean\
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./start.sh /start.sh
+ENTRYPOINT [ "./start.sh" ]
