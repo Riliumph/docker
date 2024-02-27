@@ -6,28 +6,23 @@ services:
       dockerfile: dockerfile
     # GUI用に共有メモリ拡張
     shm_size: 256m
-    stdin_open: true
-    tty: true
     init: true
     # NW
     hostname: vnc-server
     networks:
       - vnc_nw
 
-  websockify:
+  novncserver:
     build:
-      context: ./websockify
+      context: ./novncserver
       dockerfile: dockerfile
     depends_on:
       - vncserver
-    stdin_open: true
-    tty: true
     # NW
     hostname: novnc-server
     networks:
       - vnc_nw
     ports:
-      # noVNC port
       - target: 6080
         published: 6080
     # FS

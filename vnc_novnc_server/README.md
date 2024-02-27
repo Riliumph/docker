@@ -4,7 +4,7 @@
 
 <http://localhost:6080/vnc.html>
 
-- password: vnc
+- password: vncserver
 
 ## Network
 
