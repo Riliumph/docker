@@ -1,0 +1,18 @@
+services:
+  redis_master:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    hostname: redis-master
+    networks:
+      - cache_nw
+    deploy:
+      replicas: 6
+
+networks:
+  cache_nw:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.20.1.0/24
