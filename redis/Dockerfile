@@ -8,4 +8,4 @@ RUN apt-get -qq update &&\
     rm -rf /var/lib/apt/lists/*
 
 COPY redis.conf /etc/redis.conf
-CMD [ "redis-server", "/etc/redis.conf" ]
+ENTRYPOINT [ "redis-server", "/etc/redis.conf" ]

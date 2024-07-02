@@ -1,18 +1,59 @@
+x-redis-definition: &redis_definition
+  build:
+    context: .
+    dockerfile: Dockerfile
+  restart: always
+  networks:
+    - redis-cluster
+
 services:
-  redis_master:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    hostname: redis-master
+  redis_a_1:
+    <<: *redis_definition
+    entrypoint: redis-server /etc/redis.conf & redis-cli --cluster create 10.20.1.2:6379 10.20.1.3:6379 10.20.1.4:6379 10.20.1.5:6379 10.20.1.6:6379 10.20.1.7:6379 --cluster-replicas 1 --cluster-yes
+    hostname: redis-a
     networks:
-      - cache_nw
+      # - cache_nw
+      cache_nw:
+        ipv4_address: 10.20.1.7
     deploy:
-      replicas: 6
+      replicas: 2
+
+  redis_b:
+    <<: *redis_definition
+    hostname: redis-b
+    networks:
+      # - cache_nw
+      cache_nw:
+        ipv4_address: 10.20.1.7
+    deploy:
+      replicas: 2
+
+  redis_c:
+    <<: *redis_definition
+    hostname: redis-c
+    networks:
+      # - cache_nw
+      cache_nw:
+        ipv4_address: 10.20.1.7
+    deploy:
+      replicas: 2
 
 networks:
-  cache_nw:
+  cache_nw_a:
     ipam:
       driver: default
       config:
         - subnet: 10.20.1.0/24
+
+  cache_nw_b:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.20.2.0/24
+
+  cache_nw_c:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.20.3.0/24
+
