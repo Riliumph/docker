@@ -91,13 +91,6 @@ services:
       build: elasticsearch/
       hostname: elasticsearch
       restart: always
-      environment:
-        - discovery.type=single-node
-        - cluster.name=es-cluster
-        - node.name=elasticsearch
-        - bootstrap.memory_lock=true
-        - xpack.security.enabled=false
-        - TZ=Asia/Tokyo
       ulimits:
         memlock:
           soft: -1
@@ -122,8 +115,6 @@ services:
       environment:
         # log_analyzer service's hostname
         - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-        - TZ=Asia/Tokyo
-        - I18N_LOCALE=ja-JP
       depends_on:
         - log_analyzer
       restart: always
