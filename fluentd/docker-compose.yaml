@@ -12,9 +12,10 @@ services:
         - type: bind # docker providerを使う場合必須
           source: /var/run/docker.sock
           target: /var/run/docker.sock
-        - type: bind
+        - type: bind # 外部イメージのため設定はマウントで行う
           source: traefik/traefik.yaml
           target: /etc/traefik/traefik.yml
+          read_only: true
       networks:
         efk_stack_network:
 
@@ -25,6 +26,7 @@ services:
         - type: bind
           source: nginx/service-a.html
           target: /usr/share/nginx/html/service-a.html
+          read_only: true
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.service-a.rule=PathPrefix(`/service-a`)"
@@ -49,6 +51,7 @@ services:
         - type: bind
           source: nginx/service-b.html
           target: /usr/share/nginx/html/service-b.html
+          read_only: true
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.service-b.rule=PathPrefix(`/service-b`)"
@@ -77,10 +80,6 @@ services:
       #     published: 24224
       #     protocol: udp
       volumes:
-        - type: bind
-          source: fluentd
-          target: /fluentd/etc
-          read_only: true
         - type: volume
           source: log_storage
           target: /fluentd/log
