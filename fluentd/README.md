@@ -1,6 +1,12 @@
 # Fluentdを使ってみよう
 
-## 立ち上げ
+## NW構成
+
+![NW](./doc/nw.drawio.png)
+
+## 実行方法
+
+### 作成
 
 ```console
 $ docker compose up -d
@@ -15,24 +21,21 @@ $ docker compose up -d
  ✔ Container fluentd-service_a-1      Started 0.1s
 ```
 
+### 削除
+
+```console
+$ docker compose down --volumes
+```
+
 ## Kibanaへの接続
 
 [visualizerサービス（kibanaコンテナ）](http://localhost:5601/app/management/kibana/dataViews)へアクセスする。
-【手動で構成】を押下する。
 
-![kibana構築手順１](./doc/img/elastic1.png)
-
-環境変数`ELASTICSEARCH_HOSTS`のURLが記入されているので、【アドレスを確認中】を押下する。
-
-![kibana構築手順2](./doc/img/elastic2.png)
-
-【kibana】を実行を押下してkibanaコンソールへ入る。
-
-![kibana構築手順3](./doc/img/elastic3.png)
+Kibanaの使い方は[こちら](./doc//kibana/how_to_use.md)
 
 ## Traefikへの接続
 
-[http://localhost:8080/dashboard/#/](http://localhost:8080/dashboard/#/)
+[reverse_proxyサービス](http://localhost:8080/dashboard/#/)の8080ポートへアクセスする。
 
 ## 使い方
 

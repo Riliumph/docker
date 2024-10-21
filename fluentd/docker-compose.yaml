@@ -1,4 +1,3 @@
-version: '3'
 services:
     reverse_proxy:
       image: traefik:latest
