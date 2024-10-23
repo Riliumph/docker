@@ -24,13 +24,13 @@ services:
       hostname: service-a
       volumes:
         - type: bind
-          source: nginx/service-a.html
+          source: nginx/service_a.html
           target: /usr/share/nginx/html/service-a.html
           read_only: true
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.service-a.rule=PathPrefix(`/service-a`)"
-        - "traefik.http.routers.service-a.entrypoints=web"
+        - "traefik.http.routers.for-service-a.rule=PathPrefix(`/service-a`)"
+        - "traefik.http.routers.for-service-a.entrypoints=web"
       depends_on:
         - logger
       logging:
@@ -49,13 +49,13 @@ services:
       hostname: service-b
       volumes:
         - type: bind
-          source: nginx/service-b.html
+          source: nginx/service_b.html
           target: /usr/share/nginx/html/service-b.html
           read_only: true
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.service-b.rule=PathPrefix(`/service-b`)"
-        - "traefik.http.routers.service-b.entrypoints=web"
+        - "traefik.http.routers.for-service-b.rule=PathPrefix(`/service-b`)"
+        - "traefik.http.routers.for-service-b.entrypoints=web"
       depends_on:
         - logger
       logging:

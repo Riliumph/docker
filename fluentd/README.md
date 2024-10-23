@@ -42,8 +42,8 @@ Kibanaの使い方は[こちら](./doc//kibana/how_to_use.md)
 ### サービスAへのアクセス
 
 ```console
-$ curl http://localhost/service-a.html
-$ curl http://localhost/service-b.html
+$ curl http://localhost/service_a.html
+$ curl http://localhost/service_b.html
 ```
 
 `service-a`サービスに以下のログが表示される。
