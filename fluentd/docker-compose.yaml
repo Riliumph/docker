@@ -17,7 +17,7 @@ services:
           target: /etc/traefik/traefik.yml
           read_only: true
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
     service_a:
       build: ./nginx
@@ -42,7 +42,7 @@ services:
           # workaround: 起動時に接続失敗してコンテナが立ち上がらない問題を回避
           fluentd-async-connect: "true"
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
     service_b:
       build: ./nginx
@@ -65,7 +65,7 @@ services:
           tag: service.b.access
           fluentd-async-connect: "true"
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
     logger:
       build: ./fluentd
@@ -84,10 +84,10 @@ services:
           source: log_storage
           target: /fluentd/log
       networks:
-        efk_stack_network:
+        efk_stack_nw:
           ipv4_address: 10.10.10.10
 
-    log_analyzer:
+    analyzer:
       build: elasticsearch/
       hostname: elasticsearch
       restart: always
@@ -103,7 +103,7 @@ services:
       #   - target: 9200
       #     published: 9200
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
     visualizer:
       build: kibana/
@@ -113,13 +113,13 @@ services:
         - target: 5601
           published: 5601
       environment:
-        # log_analyzer service's hostname
+        # analyzer service's hostname
         - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       depends_on:
-        - log_analyzer
+        - analyzer
       restart: always
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
 volumes:
   log_storage:
@@ -130,7 +130,7 @@ volumes:
     external: false
 
 networks:
-  efk_stack_network:
+  efk_stack_nw:
     ipam:
       driver: default
       config:
