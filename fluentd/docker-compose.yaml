@@ -16,6 +16,9 @@ services:
           source: traefik/traefik.yaml
           target: /etc/traefik/traefik.yml
           read_only: true
+        - type: bind
+          source: traefik/log
+          target: /var/log/traefik
       networks:
         efk_stack_nw:
 
