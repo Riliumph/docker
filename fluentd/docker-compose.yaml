@@ -16,8 +16,8 @@ services:
           source: traefik
           target: /etc/traefik
           read_only: true
-        - type: bind
-          source: traefik/log
+        - type: volume
+          source: log_storage
           target: /var/log/traefik
       networks:
         efk_stack_nw:
@@ -86,6 +86,9 @@ services:
         - type: volume
           source: log_storage
           target: /fluentd/log
+        - type: volume # traefikログ共有用
+          source: log_storage
+          target: /var/log/traefik
       networks:
         efk_stack_nw:
           ipv4_address: 10.10.10.10
