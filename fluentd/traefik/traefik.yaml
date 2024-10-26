@@ -22,3 +22,7 @@ log:
   level: DEBUG
   format: json
   filePath: "/var/log/traefik/system.log"
+
+accessLog:
+  format: json
+  filePath: "/var/log/traefik/access.log"
