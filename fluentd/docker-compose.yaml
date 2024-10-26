@@ -85,10 +85,7 @@ services:
       volumes:
         - type: volume
           source: log_storage
-          target: /fluentd/log
-        - type: volume # traefikログ共有用
-          source: log_storage
-          target: /var/log/traefik
+          target: /fluentd/log/traefik
       networks:
         efk_stack_nw:
           ipv4_address: 10.10.10.10
