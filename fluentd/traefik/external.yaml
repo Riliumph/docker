@@ -1,0 +1,12 @@
+http:
+  routers:
+    for-home-gw:
+      service: home-gw
+      entryPoints:
+        - web
+      rule: Host(`gw.local`)
+  services:
+    home-gw:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.1"

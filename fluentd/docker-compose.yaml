@@ -13,8 +13,8 @@ services:
           source: /var/run/docker.sock
           target: /var/run/docker.sock
         - type: bind # 外部イメージのため設定はマウントで行う
-          source: traefik/traefik.yaml
-          target: /etc/traefik/traefik.yml
+          source: traefik
+          target: /etc/traefik
           read_only: true
         - type: bind
           source: traefik/log

@@ -1,8 +1,11 @@
+# service discovery settings
 providers:
   docker:
-    # labelレスのコンテナを無視する
-    exposedByDefault: false
+    exposedByDefault: false # labelレスのコンテナを無視
+  file:
+    filename: /etc/traefik/external.yaml
 
+# ports settings
 entryPoints:
   web:
     address: ":80"
