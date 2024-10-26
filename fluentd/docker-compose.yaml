@@ -1,4 +1,3 @@
-version: '3'
 services:
     reverse_proxy:
       image: traefik:latest
@@ -13,23 +12,28 @@ services:
         - type: bind # docker providerを使う場合必須
           source: /var/run/docker.sock
           target: /var/run/docker.sock
-        - type: bind
-          source: traefik/traefik.yaml
-          target: /etc/traefik/traefik.yml
+        - type: bind # 外部イメージのため設定はマウントで行う
+          source: traefik
+          target: /etc/traefik
+          read_only: true
+        - type: volume
+          source: log_storage
+          target: /var/log/traefik
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
     service_a:
       build: ./nginx
       hostname: service-a
       volumes:
         - type: bind
-          source: nginx/service-a.html
+          source: nginx/service_a.html
           target: /usr/share/nginx/html/service-a.html
+          read_only: true
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.service-a.rule=PathPrefix(`/service-a`)"
-        - "traefik.http.routers.service-a.entrypoints=web"
+        - "traefik.http.routers.for-service-a.rule=PathPrefix(`/service-a`)"
+        - "traefik.http.routers.for-service-a.entrypoints=web"
       depends_on:
         - logger
       logging:
@@ -41,19 +45,20 @@ services:
           # workaround: 起動時に接続失敗してコンテナが立ち上がらない問題を回避
           fluentd-async-connect: "true"
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
     service_b:
       build: ./nginx
       hostname: service-b
       volumes:
         - type: bind
-          source: nginx/service-b.html
+          source: nginx/service_b.html
           target: /usr/share/nginx/html/service-b.html
+          read_only: true
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.service-b.rule=PathPrefix(`/service-b`)"
-        - "traefik.http.routers.service-b.entrypoints=web"
+        - "traefik.http.routers.for-service-b.rule=PathPrefix(`/service-b`)"
+        - "traefik.http.routers.for-service-b.entrypoints=web"
       depends_on:
         - logger
       logging:
@@ -63,7 +68,7 @@ services:
           tag: service.b.access
           fluentd-async-connect: "true"
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
     logger:
       build: ./fluentd
@@ -78,28 +83,17 @@ services:
       #     published: 24224
       #     protocol: udp
       volumes:
-        - type: bind
-          source: fluentd
-          target: /fluentd/etc
-          read_only: true
         - type: volume
           source: log_storage
-          target: /fluentd/log
+          target: /fluentd/log/traefik
       networks:
-        efk_stack_network:
+        efk_stack_nw:
           ipv4_address: 10.10.10.10
 
-    log_analyzer:
+    analyzer:
       build: elasticsearch/
       hostname: elasticsearch
       restart: always
-      environment:
-        - discovery.type=single-node
-        - cluster.name=es-cluster
-        - node.name=elasticsearch
-        - bootstrap.memory_lock=true
-        - xpack.security.enabled=false
-        - TZ=Asia/Tokyo
       ulimits:
         memlock:
           soft: -1
@@ -108,11 +102,11 @@ services:
         - type: volume
           source: analysis_storage
           target: /usr/share/elasticsearch/data
-      ports:
-        - target: 9200
-          published: 9200
+      # ports:
+      #   - target: 9200
+      #     published: 9200
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
     visualizer:
       build: kibana/
@@ -122,15 +116,13 @@ services:
         - target: 5601
           published: 5601
       environment:
-        # log_analyzer service's hostname
+        # analyzer service's hostname
         - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-        - TZ=Asia/Tokyo
-        - I18N_LOCALE=ja-JP
       depends_on:
-        - log_analyzer
+        - analyzer
       restart: always
       networks:
-        efk_stack_network:
+        efk_stack_nw:
 
 volumes:
   log_storage:
@@ -141,7 +133,7 @@ volumes:
     external: false
 
 networks:
-  efk_stack_network:
+  efk_stack_nw:
     ipam:
       driver: default
       config:

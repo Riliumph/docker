@@ -1,8 +1,11 @@
+# service discovery settings
 providers:
   docker:
-    # labelレスのコンテナを無視する
-    exposedByDefault: false
+    exposedByDefault: false # labelレスのコンテナを無視
+  file:
+    filename: /etc/traefik/external.yaml
 
+# ports settings
 entryPoints:
   web:
     address: ":80"
@@ -10,9 +13,16 @@ entryPoints:
     address: ":443"
   streaming:
     address: ":1704/udp"
+
 api:
   dashboard: true
   insecure: true # dev環境用設定
 
 log:
   level: DEBUG
+  format: json
+  filePath: "/var/log/traefik/system.log"
+
+accessLog:
+  format: json
+  filePath: "/var/log/traefik/access.log"
