@@ -32,6 +32,18 @@ fluent      98  0.1  0.5 188488 55532 ?        Sl   01:23   0:01 /usr/local/bin/
 PIDが16,96,97,98で動いていることが分かる。  
 PID1はfluentdイメージのエントリポイントで、PID7が親プロセスである。
 
+## source
+
+### parse
+
+#### time_format %Y-%m-%dT%H:%M:%S%Z
+
+logファイルから時刻を取得する際に使われるフォーマット。  
+fluentdは、tag, time, recordの3情報を扱う。  
+その内のtime情報をこれで取得する。
+
+matchセクションでログファイルをローテートする際にこの値が正しくなかった場合、1970-01-01の時刻がファイルに付与されるので注意。
+
 ## match
 
 ### buffer
@@ -50,6 +62,13 @@ drwxr-xr-x 2 fluent fluent 4096 Oct 28 02:59 .
 drwxr-xr-x 3 fluent fluent 4096 Oct 28 02:57 ..
 -rw-r--r-- 1 fluent fluent  904 Oct 28 02:59 buffer.b625791df3861fc2d8b279ee602825ef4.log
 -rw-r--r-- 1 fluent fluent   89 Oct 28 02:59 buffer.b625791df3861fc2d8b279ee602825ef4.log.meta
+```
+
+`buffer.xxx.log`となっているようにハッシュ値が付与される。  
+このハッシュ値が被らないように、他のbufferとのディレクトリの共有・被りは認められていない
+
+```
+[error]: config error file="/fluentd/etc/fluent.conf" error_class=Fluent::ConfigError error="Other 'elasticsearch' plugin already use same buffer path: type = file, buffer path = /fluentd/log/traefik/"
 ```
 
 #### retry系
