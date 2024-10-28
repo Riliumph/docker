@@ -8,3 +8,5 @@ ENV cluster.name=es-cluster
 ENV node.name=elasticsearch
 ENV bootstrap.memory_lock=true
 ENV xpack.security.enabled=false
+
+RUN printf "PS1='[\T]\u@\h(\$(hostname -i)):\w \n\\$ '" >> $HOME/.bashrc
