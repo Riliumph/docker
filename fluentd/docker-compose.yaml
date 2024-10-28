@@ -1,6 +1,6 @@
 services:
     reverse_proxy:
-      image: traefik:latest
+      build: ./traefik
       hostname: traefik
       ports:
         - target: 80
@@ -13,7 +13,7 @@ services:
           source: /var/run/docker.sock
           target: /var/run/docker.sock
         - type: bind # 外部イメージのため設定はマウントで行う
-          source: traefik
+          source: traefik/etc
           target: /etc/traefik
           read_only: true
         - type: volume

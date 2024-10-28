@@ -1,0 +1,34 @@
+cluster.name: es-cluster
+network.host: 0.0.0.0
+http.port: 9200
+discovery.type: single-node
+node.name: elasticsearch
+bootstrap.memory_lock: true
+#----------------------- BEGIN SECURITY AUTO CONFIGURATION -----------------------
+#
+# The following settings, TLS certificates, and keys have been automatically
+# generated to configure Elasticsearch security features on 28-10-2024 18:08:33
+#
+# --------------------------------------------------------------------------------
+
+# Enable security features
+# xpack.security.enabled: true
+xpack.security.enabled: false
+
+# xpack.security.enrollment.enabled: true
+xpack.security.enrollment.enabled: false
+# Enable encryption for HTTP API client connections, such as Kibana, Logstash, and Agents
+# xpack.security.http.ssl:
+#   enabled: true
+#   keystore.path: certs/http.p12
+
+# Enable encryption and mutual authentication between cluster nodes
+# xpack.security.transport.ssl:
+#   enabled: true
+#   verification_mode: certificate
+#   keystore.path: certs/transport.p12
+#   truststore.path: certs/transport.p12
+# Create a new cluster with the current node only
+# Additional nodes can still join the cluster later
+# cluster.initial_master_nodes: ["elasticsearch"]
+#----------------------- END SECURITY AUTO CONFIGURATION -------------------------
