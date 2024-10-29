@@ -1,4 +1,12 @@
-# 使い方
+# サービスAの使い方
+
+サービスAは、以下の要件でアクセスログを送信する。
+
+- ログ記録形式：json構造化ログ
+- ログ送信方法：dockerのfluentd logging driver
+- ログ変更有無：fluentdでの変更なし
+
+nginxに構造化ログを出力させ、fluentdはelasticsearchへログを流すだけとする。
 
 ## ルーティングルール
 
@@ -64,8 +72,8 @@ $ trafik/log/access.log
 
 Docker Desktopの`service-a`サービスに以下のログが表示される。
 
-```log
-2024-10-26 17:48:42 10.10.10.3 - - [26/Oct/2024:08:48:42 +0000] "GET /service-a.html HTTP/1.1" 200 9 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0" "10.10.10.1"
+```json
+{"time_local":"2024-10-29T21:01:31+00:00","remote_addr":"10.10.10.3","request":"GET /service-a.html HTTP/1.1","status":"304","body_bytes_sent":"0","http_referer":"","http_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0","request_time":"0.000","upstream_response_time":"","host":"localhost"}
 ```
 
 このログが`fluentd`によって成形されて、`logger`サービスに以下のログが表示される。
@@ -75,16 +83,11 @@ Docker Desktopの`service-a`サービスに以下のログが表示される。
 Docker Desktopの`logger`サービスに以下のログが表示される。
 
 ```json
-2024-10-26 17:48:42 2024-10-26 08:48:42.000000000 +0000 service.a.access:
-{
-  "container_name": "/fluentd-service_a-1",
-  "source": "stdout",
-  "log": "10.10.10.3 - - [26/Oct/2024:08:48:42 +0000] \"GET /service-a.html HTTP/1.1\" 200 9 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0\" \"10.10.10.1\"",
-  "container_id": "51a5f3f11410ec104593b3b3c3d30a62e64ebd96fa0b4e7a3abca759038ef514"
-}
+2024-10-30 06:01:31.000000000 +0900 service.a.access: {"container_name":"/fluentd-service_a-1","source":"stdout","log":"{\"time_local\":\"2024-10-29T21:01:31+00:00\",\"remote_addr\":\"10.10.10.3\",\"request\":\"GET /service-a.html HTTP/1.1\",\"status\":\"304\",\"body_bytes_sent\":\"0\",\"http_referer\":\"\",\"http_user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0\",\"request_time\":\"0.000\",\"upstream_response_time\":\"\",\"host\":\"localhost\"}","container_id":"ccf036ba96ce5d03f8428001c3675cc8d97f4115714cce276e1edf60a98c9b7d"}
 ```
 
-> 時刻が一致していることが分かる。また、json部分をフォーマットした。
+> 時刻が一致していることが分かる。  
+> nginxではiso8601表記か西洋表記しかないので前者を選択（JSTにはならないので脳内で9時間補正する）
 
 `logger`サービスの`fluentd`が、`analyzer`サービスの`elasticsearch`へ転送する。  
 ただし、`elasticsearch`のログは自身に関するログのみ取り扱うため、ログファイルで見ることはできない。  
@@ -95,41 +98,53 @@ Docker Desktopの`logger`サービスに以下のログが表示される。
 
 ```json
 {
-  "@log_name": [
-    "service.a.access"
+  "_index": "nginx-a-log-20241029",
+  "_id": "KQYV2pIBCgnkn1Z3dAWm",
+  "_version": 1,
+  "_score": null,
+  "_ignored": [
+    "log.keyword"
   ],
-  "@log_name.keyword": [
-    "service.a.access"
-  ],
-  "@timestamp": [
-    "2024-10-26T08:48:42.000Z"
-  ],
-  "container_id": [
-    "51a5f3f11410ec104593b3b3c3d30a62e64ebd96fa0b4e7a3abca759038ef514"
-  ],
-  "container_id.keyword": [
-    "51a5f3f11410ec104593b3b3c3d30a62e64ebd96fa0b4e7a3abca759038ef514"
-  ],
-  "container_name": [
-    "/fluentd-service_a-1"
-  ],
-  "container_name.keyword": [
-    "/fluentd-service_a-1"
-  ],
-  "log": [
-    "10.10.10.3 - - [26/Oct/2024:08:48:42 +0000] \"GET /service-a.html HTTP/1.1\" 200 9 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0\" \"10.10.10.1\""
-  ],
-  "log.keyword": [
-    "10.10.10.3 - - [26/Oct/2024:08:48:42 +0000] \"GET /service-a.html HTTP/1.1\" 200 9 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0\" \"10.10.10.1\""
-  ],
-  "source": [
-    "stdout"
-  ],
-  "source.keyword": [
-    "stdout"
-  ],
-  "_id": "7ZMDyJIB8x7kXa9sdwAi",
-  "_index": "nginx-a-log-20241026",
-  "_score": null
+  "fields": {
+    "@timestamp": [
+      "2024-10-29T21:01:31.000Z"
+    ],
+    "container_name": [
+      "/fluentd-service_a-1"
+    ],
+    "log": [
+      "{\"time_local\":\"2024-10-29T21:01:31+00:00\",\"remote_addr\":\"10.10.10.3\",\"request\":\"GET /service-a.html HTTP/1.1\",\"status\":\"304\",\"body_bytes_sent\":\"0\",\"http_referer\":\"\",\"http_user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0\",\"request_time\":\"0.000\",\"upstream_response_time\":\"\",\"host\":\"localhost\"}"
+    ],
+    "@log_name": [
+      "service.a.access"
+    ],
+    "container_id.keyword": [
+      "ccf036ba96ce5d03f8428001c3675cc8d97f4115714cce276e1edf60a98c9b7d"
+    ],
+    "source": [
+      "stdout"
+    ],
+    "@log_name.keyword": [
+      "service.a.access"
+    ],
+    "container_name.keyword": [
+      "/fluentd-service_a-1"
+    ],
+    "source.keyword": [
+      "stdout"
+    ],
+    "container_id": [
+      "ccf036ba96ce5d03f8428001c3675cc8d97f4115714cce276e1edf60a98c9b7d"
+    ]
+  },
+  "ignored_field_values": {
+    "log.keyword": [
+      "{\"time_local\":\"2024-10-29T21:01:31+00:00\",\"remote_addr\":\"10.10.10.3\",\"request\":\"GET /service-a.html HTTP/1.1\",\"status\":\"304\",\"body_bytes_sent\":\"0\",\"http_referer\":\"\",\"http_user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0\",\"request_time\":\"0.000\",\"upstream_response_time\":\"\",\"host\":\"localhost\"}"
+    ]
+  },
+  "sort": [
+    "2024-10-29T21:01:31.000Z",
+    18
+  ]
 }
 ```
