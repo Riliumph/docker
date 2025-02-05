@@ -71,3 +71,36 @@ log_format structured_log escape=json '{'
    "http_user_agent": "hoge\"hoge",
 }
 ```
+
+## syslogを使う
+
+> [syslog](https://ja.wikipedia.org/wiki/Syslog)  
+> syslogとは、ログメッセージをIPネットワーク上で転送する標準規格のこと。  
+> System Logging Protocolの略称とされており、プロトコルからシステムに対してまで幅広い文脈で使用される。  
+> `Facility`はログの種類、`Severity`はログの重要度を示すことが大きな構成要素として存在する。
+
+NginxでFluentdサーバーへの転送を行う場合に使用する。  
+Dockerを使っているとマウントが簡単なのでお世話にならなかったりもする。
+
+```conf
+server {
+    listen       80;
+    listen  [::]:80;
+    server_name  service-b;
+    # "log_type" "destination" "log_format_name"の書式を取る。
+    # "destination"にファイルを使う場合は、"/xxx"の書式を取る。
+    # access_log /var/log/nginx/access.log main;
+    # "destination"にsyslogを使う場合は、"syslog:server=HOST:PORT"の書式を取る。
+    access_log syslog:server=logger:24224,tag=service_b_access main;
+    ... ... ...
+    ... ...
+    ...
+}
+```
+
+### syslogのタグには文字制約がある
+
+> nginx: [emerg] syslog "tag" only allows alphanumeric characters and underscore in /etc/nginx/conf.d/default.conf:21
+
+syslogタグはアルファベットとアンダースコアしか認められていない。  
+ドットでつなぐなどはできないので注意
