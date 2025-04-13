@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
-RUN apt-get update &&\
-    apt-get install --no-install-recommends -y \
+RUN apt-get -q update &&\
+    apt-get -q install --no-install-recommends -y \
     curl \
     dnsutils \
     iproute2 \

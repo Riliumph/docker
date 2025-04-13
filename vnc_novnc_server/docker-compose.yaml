@@ -1,4 +1,3 @@
-version: '3'
 services:
   vncserver:
     build:
@@ -31,8 +30,3 @@ services:
 
 networks:
   vnc_nw:
-    external: false
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.10.0.0/16

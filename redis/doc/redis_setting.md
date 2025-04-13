@@ -128,3 +128,31 @@ AOFはRedis2.8.22以降はサポートされていない。
 
 > - [ElastiCache for Redisのクラスターモードについて調べてみた](https://dev.classmethod.jp/articles/elasticache-cluster-mode/)
 > - [イラストで理解するElastiCacheのスケーリング](https://zenn.dev/fdnsy/articles/727864f43d9e67)
+
+## cluster-announce-port
+
+```console
+>>> Performing hash slots allocation on 6 nodes...
+Master[0] -> Slots 0 - 5460
+Master[1] -> Slots 5461 - 10922
+Master[2] -> Slots 10923 - 16383
+Adding replica redis-5:6379 to redis-1:6379
+Adding replica redis-6:6379 to redis-2:6379
+Adding replica redis-4:6379 to redis-3:6379
+M: a46a4c9368a70bbdb0e841e776a355b82bf27587 redis-1:6379
+   slots:[0-5460] (5461 slots) master
+M: c981bd05662a69123ed007c075b6fb92042a2c54 redis-2:6379
+   slots:[5461-10922] (5462 slots) master
+M: 804d65112a69909eb997399b0f90a804febf7621 redis-3:6379
+   slots:[10923-16383] (5461 slots) master
+S: f4a31a380461b6c7579a2963b3c43754d4f32eeb redis-4:6379
+   replicates 804d65112a69909eb997399b0f90a804febf7621
+S: 2a204b45377db43ac10d58289a5a9f45ee716421 redis-5:6379
+   replicates a46a4c9368a70bbdb0e841e776a355b82bf27587
+S: ab139050f0d1524200da07760e7bd53521e1a938 redis-6:6379
+   replicates c981bd05662a69123ed007c075b6fb92042a2c54
+>>> Nodes configuration updated
+>>> Assign a different config epoch to each node
+>>> Sending CLUSTER MEET messages to join the cluster
+Waiting for the cluster to join
+```

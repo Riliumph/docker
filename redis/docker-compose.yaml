@@ -3,57 +3,57 @@ x-redis-definition: &redis_definition
     context: .
     dockerfile: Dockerfile
   restart: always
-  networks:
-    - redis-cluster
+  stdin_open: true
+  tty: true
+
 
 services:
-  redis_a_1:
+  redis_client:
     <<: *redis_definition
-    entrypoint: redis-server /etc/redis.conf & redis-cli --cluster create 10.20.1.2:6379 10.20.1.3:6379 10.20.1.4:6379 10.20.1.5:6379 10.20.1.6:6379 10.20.1.7:6379 --cluster-replicas 1 --cluster-yes
-    hostname: redis-a
+    # entrypoint: redis-cli --cluster create redis-1:6379 redis-2:6379 redis-3:6379 redis-4:6379 redis-5:6379 redis-6:6379 --cluster-replicas 1 --cluster-yes
+    entrypoint: ["/bin/bash"]
+    hostname: redis-client
     networks:
-      # - cache_nw
-      cache_nw:
-        ipv4_address: 10.20.1.7
-    deploy:
-      replicas: 2
-
-  redis_b:
+      - cache_nw
+    depends_on:
+      - redis_node_1
+      - redis_node_2
+      - redis_node_3
+      - redis_node_4
+      - redis_node_5
+      - redis_node_6
+  redis_node_1:
     <<: *redis_definition
-    hostname: redis-b
+    hostname: redis-node-1
     networks:
-      # - cache_nw
-      cache_nw:
-        ipv4_address: 10.20.1.7
-    deploy:
-      replicas: 2
-
-  redis_c:
+      - cache_nw
+  redis_node_2:
     <<: *redis_definition
-    hostname: redis-c
+    hostname: redis-node-2
     networks:
-      # - cache_nw
-      cache_nw:
-        ipv4_address: 10.20.1.7
-    deploy:
-      replicas: 2
-
+      - cache_nw
+  redis_node_3:
+    <<: *redis_definition
+    hostname: redis-node-3
+    networks:
+      - cache_nw
+  redis_node_4:
+    <<: *redis_definition
+    hostname: redis-node-4
+    stdin_open: true
+    tty: true
+    networks:
+      - cache_nw
+  redis_node_5:
+    <<: *redis_definition
+    hostname: redis-node-5
+    networks:
+      - cache_nw
+  redis_node_6:
+    <<: *redis_definition
+    hostname: redis-node-6
+    networks:
+      - cache_nw
 networks:
-  cache_nw_a:
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.20.1.0/24
-
-  cache_nw_b:
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.20.2.0/24
-
-  cache_nw_c:
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.20.3.0/24
+  cache_nw:
 

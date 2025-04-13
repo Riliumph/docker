@@ -1,5 +1,4 @@
 # https://docs.docker.com/compose/compose-file/
-version: "3.8"
 services:
   # NW1 -------------------------
   client_in_nw1:

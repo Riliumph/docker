@@ -16,4 +16,5 @@ RUN apt-get update -qq &&\
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./start.sh /start.sh
+RUN echo "PS1='\u@\h(\$(hostname -i)):\w \\$ '" >> ~/.bashrc
 ENTRYPOINT [ "./start.sh" ]

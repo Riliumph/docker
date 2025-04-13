@@ -42,6 +42,6 @@ RUN mkdir -p /var/run/supervisor\
     && chmod -R g+wr /var/run/supervisor\
     && chown -R :supervisor /var/log/supervisor\
     && chmod -R g+wr /var/log/supervisor
-
 COPY ./start.sh start.sh
+RUN echo "PS1='\u@\h(\$(hostname -i)):\w \\$ '" >> ~/.bashrc
 ENTRYPOINT [ "/usr/bin/supervisord" ]

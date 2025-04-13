@@ -26,7 +26,7 @@
 
 ```console
 $ docker compose exec -it db /bin/bash
-root@db_server(10.10.10.2):/ #
+root@db_server(172.18.0.2):/ #
 ```
 
 ## DBへの接続
