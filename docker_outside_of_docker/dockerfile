@@ -1,0 +1,49 @@
+FROM ubuntu:22.04
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+RUN apt-get -qq update &&\
+    DEBIAN_FRONTEND=noninteractive apt-get -qq install --no-install-recommends -y\
+    ## utils
+    sudo\
+    bash-completion\
+    less\
+    silversearcher-ag\
+    peco\
+    git\
+    vim\
+    # for add-apt-repository
+    software-properties-common\
+    ## network tools
+    curl\
+    wget
+
+RUN echo "INSTALL DOCKER"
+ENV DOCKER_KEYRING_URL=https://download.docker.com/linux/ubuntu/gpg
+ENV DOCKER_KEYRING_PATH=/etc/apt/keyrings/docker.asc
+ENV DOCKER_URI=https://download.docker.com/linux/ubuntu
+RUN CPU_ARCH=$(dpkg --print-architecture) &&\
+    UBUNTU_CODENAME=$(. /etc/os-release && echo ${UBUNTU_CODENAME}) &&\
+    curl -fsSL ${DOCKER_KEYRING_URL} -o ${DOCKER_KEYRING_PATH} &&\
+    echo "deb [arch=${CPU_ARCH} signed-by=${DOCKER_KEYRING_PATH}] ${DOCKER_URI} ${UBUNTU_CODENAME} stable" >/etc/apt/sources.list.d/docker.list
+# RUN apt-get -qq update &&\
+#     DEBIAN_FRONTEND=noninteractive apt-get -qq install --no-install-recommends -y\
+#     docker-ce\
+#     docker-ce-cli\
+#     containerd.io\
+#     docker-buildx-plugin\
+#     docker-compose-plugin
+
+WORKDIR /root/.config/bash_completion.d
+# RUN docker completion bash > docker &&\
+#     {\
+#     # /etc/bash.bashrcと/root/.bashrcで無効化されているため有効化する
+#     echo "if [ -f /etc/bash_completion ]; then";\
+#     echo "    . /etc/bash_completion";\
+#     echo "fi";\
+#     echo "source $HOME/.config/bash_completion.d/docker";\
+#     } >> $HOME/.bashrc
+
+WORKDIR /
+
+ENTRYPOINT [ "/bin/bash" ]

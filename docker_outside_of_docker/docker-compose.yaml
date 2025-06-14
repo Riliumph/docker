@@ -1,0 +1,12 @@
+services:
+    dood:
+      build:
+        context: .
+        dockerfile: dockerfile
+      hostname: dood
+      stdin_open: true
+      tty: true
+      volumes:
+        - type: bind # docker providerを使う場合必須
+          source: /var/run/docker.sock
+          target: /var/run/docker.sock
