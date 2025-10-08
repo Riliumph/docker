@@ -1,0 +1,23 @@
+services:
+  db:
+    build:
+      context: ./dockerfiles
+      dockerfile: db.dockerfile
+    restart: always
+    hostname: db_server
+    networks:
+      - db_nw
+    ports:
+      - target: 1433
+        published: 1433
+    stdin_open: false
+    tty: false
+
+# volumes:
+#   db-storage:
+#     name: db-storage
+#     external: false
+
+networks:
+  db_nw:
+    external: false
