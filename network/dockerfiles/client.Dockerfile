@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM debian:bookworm-slim
 
 RUN apt-get -q update &&\
     apt-get -q install --no-install-recommends -y \
@@ -7,7 +7,8 @@ RUN apt-get -q update &&\
     iproute2 \
     iputils-ping \
     telnet \
-    traceroute &&\
+    traceroute \
+    openssh-client &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 

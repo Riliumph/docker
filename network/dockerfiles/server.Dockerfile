@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM debian:bookworm-slim
 
 RUN apt-get update &&\
     apt-get install --no-install-recommends -y \
@@ -7,9 +7,12 @@ RUN apt-get update &&\
     iproute2 \
     iputils-ping \
     telnetd \
-    traceroute && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    traceroute \
+    openssh-server\
+    apache2\
+    supervisor\
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN echo "echo 'loading /etc/profile'" >> /etc/profile && \
     echo "echo 'loading /etc/bash.bashrc'" >> /etc/bash.bashrc && \
@@ -26,4 +29,9 @@ RUN useradd -m docker && \
     echo "docker:docker" | \
     chpasswd
 
-ENTRYPOINT [ "/usr/sbin/in.telnetd", "-debug", "23" ]
+RUN mkdir -p /var/lock/apache2 /var/run/apache2 /var/run/sshd /var/log/supervisor
+
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+ENTRYPOINT ["/usr/bin/supervisord"]
+
