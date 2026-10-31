@@ -16,8 +16,17 @@ RUN apt-get -qq update \
     silversearcher-ag\
     vim\
     # networks
-    dnsutils\
-    iputils-ping\
+    curl \
+    dnsutils \
+    netcat-openbsd \
+    net-tools \
+    iproute2 \
+    iputils-ping \
+    tcpdump \
+    traceroute \
+    tshark \
+    wget \
+    # util
     && apt-get clean\
     && rm -rf /var/lib/apt/lists/*
 
